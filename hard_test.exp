@@ -1,0 +1,30 @@
+#!/usr/bin/expect -f
+set timeout 180
+log_user 1
+
+spawn ./target/debug/ocli
+
+expect "You: "
+send "/plan Add a /stats command that shows session statistics\r"
+
+expect "You: "
+send "/next\r"
+
+sleep 10
+
+expect "You: "
+send "/read src/main.rs\r"
+
+expect "You: "
+send "/write src/stats.rs\r"
+
+expect "You: "
+send "Create a stats module with a SessionStats struct that tracks: messages_sent, files_read, files_written, commands_executed. Include methods to increment counters and display stats.\r"
+
+expect "You: "
+send "/preview\r"
+
+expect "You: "
+send "exit\r"
+
+expect eof

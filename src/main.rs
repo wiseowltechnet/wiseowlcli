@@ -1,3 +1,4 @@
+mod stats;
 mod wiseowl;
 mod planning;
 mod prompts;
@@ -339,6 +340,11 @@ Use tools as needed and provide the result.", step.description);
             let rule = parts[1..].join(" ");
             owl.add_rule(&rule).await?;
             println!("✅ Added to RULES");
+        }
+        
+        "stats" => {
+            let stats = crate::stats::SessionStats::new();
+            println!("{}", stats.display());
         }
         
         "version" => {
