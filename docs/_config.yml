@@ -1,0 +1,6 @@
+theme: jekyll-theme-cayman
+title: OCLI
+description: AI coding assistant with self-improvement capabilities
+show_downloads: true
+github:
+  repository_url: https://github.com/yourusername/ollama-ocli

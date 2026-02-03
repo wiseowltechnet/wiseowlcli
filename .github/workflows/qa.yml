@@ -1,0 +1,38 @@
+name: QA
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        components: rustfmt, clippy
+        override: true
+    
+    - name: Check formatting
+      run: cargo fmt -- --check
+    
+    - name: Clippy
+      run: cargo clippy -- -D warnings
+    
+    - name: Run tests
+      run: cargo test
+    
+    - name: Build
+      run: cargo build --release
+    
+    - name: Security audit
+      run: |
+        cargo install cargo-audit || true
+        cargo audit || true

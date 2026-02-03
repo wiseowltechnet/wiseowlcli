@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    
+    - name: Build
+      run: cargo build --release
+    
+    - name: Package
+      run: |
+        cd target/release
+        tar czf ocli-${{ matrix.os }}.tar.gz ocli
+    
+    - name: Upload Release Asset
+      uses: actions/upload-artifact@v3
+      with:
+        name: ocli-${{ matrix.os }}
+        path: target/release/ocli-${{ matrix.os }}.tar.gz
