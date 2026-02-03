@@ -1,54 +1,48 @@
 {
-  "goal": "Create a REST API",
+  "goal": "Add a /stats command that shows session statistics",
   "steps": [
     {
       "number": 1,
-      "description": "Set up project structure",
+      "description": "**Setup**: Start by setting up the necessary data structures to keep track of sessions and commands run in your CLI application. You might use dictionaries, lists, classes, etc., depending on what suits your needs better. Here's an example with a dictionary where keys are user names (strings) and values are another dictionary storing session start time (datetime), command count (integer), etc.:",
       "completed": false,
       "result": null
     },
     {
       "number": 2,
-      "description": "Add web framework dependencies",
+      "description": "**Tracking Command Execution**: When a command is executed, increment the counter for that specific user and update the last execution timestamp. If it's a new session (i.e., '/login'), start tracking this user now. Here's an example code snippet when executing \"/command\" where 'user_name' represents current logged-in user:",
       "completed": false,
       "result": null
     },
     {
       "number": 3,
-      "description": "Create route handlers",
+      "description": "**Adding '/stats' Command**: To make your CLI application understand \"/stats\", you have to add a new command parsing mechanism to interpret it and display statistics accordingly. You can use Python's inbuilt functions or regular expressions (regex) to parse the input and detect if it matches \"/stats\". If so, execute this step as below:",
       "completed": false,
       "result": null
     },
     {
       "number": 4,
-      "description": "Add database integration",
+      "description": "**Error Handling**: Make sure to handle any possible error scenarios in your CLI app, such as incorrect usage of command (e.g., no user logged-in when attempting \"/logout\"), etc. To ensure accuracy and ease of use, provide clear messages about the issues that may arise.",
       "completed": false,
       "result": null
     },
     {
       "number": 5,
-      "description": "Implement authentication",
+      "description": "**Testing and Refining**: After implementing this feature, thoroughly test it in your CLI app to make sure it behaves as expected. This could involve running different scenarios (e.g., login-logout cycles, multiple sessions), check how many commands are being tracked, when they were executed, etc.",
       "completed": false,
       "result": null
     },
     {
       "number": 6,
-      "description": "Add error handling",
+      "description": "**Documentation**: Document all the code you have written for better understanding and future maintenance of your CLI application. Commenting and docstrings make it easier to understand what each section of your code does.",
       "completed": false,
       "result": null
     },
     {
       "number": 7,
-      "description": "Write tests",
-      "completed": false,
-      "result": null
-    },
-    {
-      "number": 8,
-      "description": "Add documentation",
+      "description": "**Deployment**: Finally, deploy this feature in your production environment once everything has been tested thoroughly and debugged as required.",
       "completed": false,
       "result": null
     }
   ],
-  "created_at": "2026-02-03T03:28:16.438098660+00:00"
+  "created_at": "2026-02-03T04:59:41.792524829+00:00"
 }
