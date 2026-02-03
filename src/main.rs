@@ -208,7 +208,7 @@ async fn handle_slash_command(
             println!("{}🔧 WiseOwl{}", PURPLE, RESET);
             println!("  /todo /done /rule /context");
             println!("{}📁 Files{}", PURPLE, RESET);
-            println!("  /read /write /preview /apply /rollback");
+            println!("  /read /write /write-direct /append /build /template /model /preview /apply /rollback");
             println!("{}🔌 MCP{}", PURPLE, RESET);
             println!("  /mcp list | /mcp call <tool>");
             println!("{}⚙️  Config{}", PURPLE, RESET);
@@ -270,6 +270,215 @@ async fn handle_slash_command(
             println!("✅ Added to pending changes. Use /preview to review, /apply to save.");
         }
 
+
+        "write-direct" => {
+            if parts.len() < 3 {
+                println!("❌ Usage: /write-direct <file> <content>");
+                return Ok(true);
+            }
+            let path = parts[1];
+            let content = parts[2..].join(" ");
+            
+            match tokio::fs::write(path, content.as_bytes()).await {
+                Ok(_) => println!("✅ Wrote {} bytes to {}", content.len(), path),
+                Err(e) => println!("❌ Error: {}", e),
+            }
+        }
+
+        "append" => {
+            if parts.len() < 3 {
+                println!("❌ Usage: /append <file> <content>");
+                return Ok(true);
+            }
+            let path = parts[1];
+            let content = parts[2..].join(" ");
+            
+            match tokio::fs::OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(path)
+                .await
+            {
+                Ok(mut file) => {
+                    use tokio::io::AsyncWriteExt;
+                    match file.write_all(format!("\n{}", content).as_bytes()).await {
+                        Ok(_) => println!("✅ Appended to {}", path),
+                        Err(e) => println!("❌ Error: {}", e),
+                    }
+                }
+                Err(e) => println!("❌ Error: {}", e),
+            }
+        }
+
+        "build" => {
+            let lang = if parts.len() > 1 { parts[1] } else { "auto" };
+            
+            let (cmd, args) = match lang {
+                "go" => ("go", vec!["build"]),
+                "rust" | "cargo" => ("cargo", vec!["build", "--release"]),
+                "npm" | "node" => ("npm", vec!["run", "build"]),
+                "auto" => {
+                    if Path::new("Cargo.toml").exists() {
+                        ("cargo", vec!["build", "--release"])
+                    } else if Path::new("go.mod").exists() {
+                        ("go", vec!["build"])
+                    } else if Path::new("package.json").exists() {
+                        ("npm", vec!["run", "build"])
+                    } else {
+                        println!("❌ Could not detect project type");
+                        return Ok(true);
+                    }
+                }
+                _ => {
+                    println!("❌ Unknown language: {}", lang);
+                    return Ok(true);
+                }
+            };
+            
+            println!("🔨 Building with {} {}...", cmd, args.join(" "));
+            match tokio::process::Command::new(cmd)
+                .args(&args)
+                .output()
+                .await
+            {
+                Ok(output) => {
+                    if output.status.success() {
+                        println!("✅ Build successful");
+                        if !output.stdout.is_empty() {
+                            println!("{}", String::from_utf8_lossy(&output.stdout));
+                        }
+                    } else {
+                        println!("❌ Build failed");
+                        println!("{}", String::from_utf8_lossy(&output.stderr));
+                    }
+                }
+                Err(e) => println!("❌ Error: {}", e),
+            }
+        }
+
+        "template" => {
+            if parts.len() < 3 {
+                println!("❌ Usage: /template <type> <path>");
+                println!("Types: go-mcp-server, rust-cli, python-script");
+                return Ok(true);
+            }
+            let template_type = parts[1];
+            let path = parts[2];
+            
+            let content = match template_type {
+                "go-mcp-server" => r#"package main
+
+import (
+	"bufio"
+	"encoding/json"
+	"fmt"
+	"os"
+)
+
+type Request struct {
+	JSONRPC string                 `json:"jsonrpc"`
+	ID      int                    `json:"id"`
+	Method  string                 `json:"method"`
+	Params  map[string]interface{} `json:"params"`
+}
+
+type Response struct {
+	JSONRPC string      `json:"jsonrpc"`
+	ID      int         `json:"id"`
+	Result  interface{} `json:"result,omitempty"`
+}
+
+func handleRequest(req Request) Response {
+	resp := Response{JSONRPC: "2.0", ID: req.ID}
+	
+	if req.Method == "tools/list" {
+		resp.Result = map[string]interface{}{
+			"tools": []map[string]interface{}{
+				{"name": "example", "description": "Example tool"},
+			},
+		}
+	}
+	
+	return resp
+}
+
+func main() {
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		var req Request
+		json.Unmarshal(scanner.Bytes(), &req)
+		resp := handleRequest(req)
+		output, _ := json.Marshal(resp)
+		fmt.Println(string(output))
+	}
+}
+"#,
+                "rust-cli" => r#"use clap::Parser;
+
+#[derive(Parser)]
+#[command(name = "mycli")]
+#[command(about = "A CLI tool", long_about = None)]
+struct Cli {
+    #[arg(short, long)]
+    name: String,
+}
+
+fn main() {
+    let cli = Cli::parse();
+    println!("Hello, {}!", cli.name);
+}
+"#,
+                "python-script" => r#"#!/usr/bin/env python3
+import sys
+import json
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: script.py <arg>")
+        sys.exit(1)
+    
+    print(f"Hello from Python: {sys.argv[1]}")
+
+if __name__ == "__main__":
+    main()
+"#,
+                _ => {
+                    println!("❌ Unknown template: {}", template_type);
+                    println!("Available: go-mcp-server, rust-cli, python-script");
+                    return Ok(true);
+                }
+            };
+            
+            match tokio::fs::write(path, content.as_bytes()).await {
+                Ok(_) => println!("✅ Created {} from template {}", path, template_type),
+                Err(e) => println!("❌ Error: {}", e),
+            }
+        }
+
+        "model" => {
+            if parts.len() < 2 {
+                println!("Current model: {}", model);
+                println!("Usage: /model <name>");
+                println!("Examples: /model qwen2.5-coder:7b");
+                println!("Note: Restart OCLI to use new model");
+                return Ok(true);
+            }
+            let new_model = parts[1..].join(" ");
+            
+            // Save to config
+            let config_path = std::path::PathBuf::from(std::env::var("HOME").unwrap()).join(".ocli/config.json");
+            let mut config = if let Ok(content) = tokio::fs::read_to_string(&config_path).await {
+                serde_json::from_str(&content).unwrap_or_else(|_| serde_json::json!({}))
+            } else {
+                serde_json::json!({})
+            };
+            
+            config["model"] = serde_json::json!(new_model);
+            tokio::fs::write(&config_path, serde_json::to_string_pretty(&config)?).await?;
+            
+            println!("✅ Model set to: {}", new_model);
+            println!("💡 Restart OCLI to use the new model");
+        }
         "preview" => {
             if editor.has_pending() {
                 println!("{}", editor.show_preview());
