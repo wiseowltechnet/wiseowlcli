@@ -263,6 +263,7 @@ async fn handle_slash_command(owl: &crate::wiseowl::WiseOwl,
             }
             let goal = parts[1..].join(" ");
             println!("🎯 Creating plan: {}", goal);
+    println!("⏳ This may take 30-60 seconds...");
             
             let prompt = format!("Create a detailed step-by-step plan to: {}
 
@@ -410,6 +411,7 @@ Use tools as needed and provide the result.", step.description);
 
 async fn init_project_mode(client: &Client, model: &str) -> Result<(), Box<dyn std::error::Error>> {
     println!("🤖 OCLI - Initializing project");
+    println!("⏳ Analyzing project structure...");
     
     let current_dir = std::env::current_dir()?;
     println!("📁 Analyzing: {}", current_dir.display());
