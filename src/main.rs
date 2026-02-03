@@ -1,5 +1,8 @@
 mod metrics;
 mod context;
+mod readline;
+mod syntax;
+mod progress;
 mod errors;
 mod git;
 mod lcars;
