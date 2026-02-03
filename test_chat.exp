@@ -1,0 +1,59 @@
+#!/usr/bin/expect -f
+
+# Test OCLI chat functionality
+set timeout 60
+
+puts "🧪 Testing OCLI chat mode..."
+
+# Test 1: Default chat mode (no subcommand)
+spawn ocli
+
+expect "🤖 OCLI - Using deepseek-coder:6.7b" {
+    puts "✅ Chat mode started successfully"
+} timeout {
+    puts "❌ Chat mode failed to start"
+    exit 1
+}
+
+expect "You: " {
+    puts "✅ Chat prompt appeared"
+} timeout {
+    puts "❌ Chat prompt didn't appear"
+    exit 1
+}
+
+# Send a simple test
+send "Say hi\r"
+
+expect "AI: " {
+    puts "✅ AI response started"
+} timeout {
+    puts "❌ AI didn't respond"
+    exit 1
+}
+
+# Wait for response content
+expect {
+    "Hi" {
+        puts "✅ Got AI response!"
+        exp_continue
+    }
+    "Hello" {
+        puts "✅ Got AI response!"
+        exp_continue
+    }
+    "You: " {
+        puts "✅ Back to chat prompt"
+    }
+    timeout {
+        puts "❌ Timeout waiting for response"
+        exit 1
+    }
+}
+
+# Test exit
+send "exit\r"
+expect "Goodbye! 👋"
+expect eof
+
+puts "🎉 Chat mode test passed!"

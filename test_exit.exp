@@ -1,0 +1,38 @@
+#!/usr/bin/expect -f
+
+# Simple test for OCLI exit functionality
+set timeout 10
+
+puts "Testing OCLI exit functionality..."
+
+# Start OCLI
+spawn ocli
+
+# Wait for the prompt
+expect "You: " {
+    puts "✅ OCLI started successfully"
+} timeout {
+    puts "❌ OCLI failed to start"
+    exit 1
+}
+
+# Test exit command
+send "exit\r"
+
+# Wait for goodbye message
+expect "Goodbye! 👋" {
+    puts "✅ Exit command works"
+} timeout {
+    puts "❌ Exit command failed"
+    exit 1
+}
+
+# Wait for process to actually exit
+expect eof {
+    puts "✅ Process exited cleanly"
+} timeout {
+    puts "❌ Process didn't exit properly"
+    exit 1
+}
+
+puts "🎉 All exit tests passed!"

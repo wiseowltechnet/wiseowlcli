@@ -1,0 +1,5 @@
+{
+  "analysis": "Project Type: Rust\n\nKey Files:\n- .gitignore (8 bytes)\n- Cargo.toml (395 bytes)\n- README.md (556 bytes)\n\nDirectories:\n- src/\n- .git/\n",
+  "directory": "/home/drew/projects/ollama-ocli",
+  "timestamp": "2026-02-02T18:32:49.137931665+00:00"
+}
