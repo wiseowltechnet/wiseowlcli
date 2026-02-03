@@ -1,0 +1,15 @@
+#!/usr/bin/expect -f
+set timeout 60
+log_user 1
+
+spawn ./target/debug/ocli
+
+expect "You: "
+send "What files are in the src directory?\r"
+
+sleep 5
+
+expect "You: "
+send "exit\r"
+
+expect eof

@@ -1,3 +1,4 @@
+mod lcars;
 mod git;
 mod stats;
 mod wiseowl;
@@ -72,7 +73,8 @@ async fn chat_mode(client: &Client, model: &str, session: Option<&str>) -> Resul
     let mut context = ConversationContext::load(session_name).await?;
     let mut editor = MultiFileEditor::new();
     
-    println!("🤖 OCLI - Using {} (Session: {})", model, session_name);
+    println!("{}", crate::lcars::header());
+    println!("{}", crate::lcars::status_bar(&format!("Model: {}", model), &format!("Session: {}", session_name)));
     println!("Type 'exit' or Ctrl+C to end");
     println!("💡 Use /help for commands\n");
     
