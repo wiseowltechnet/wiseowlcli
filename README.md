@@ -202,3 +202,26 @@ MIT
 ---
 
 **Made with 🦉 by the OCLI community**
+
+## Development & QA
+
+OCLI uses professional QA tools similar to Gradle:
+
+```bash
+# Format code (like Spotless)
+make fmt
+
+# Lint code (like Checkstyle/SpotBugs)
+make lint
+
+# Run tests (like JUnit)
+make test
+
+# Full QA pipeline
+make qa
+
+# CI pipeline
+make ci
+```
+
+See [QA_TOOLS.md](QA_TOOLS.md) for complete guide.
