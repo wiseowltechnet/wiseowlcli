@@ -21,7 +21,7 @@ use context::{ConversationContext, FileChange};
 use planning::Plan;
 use multi_file::{MultiFileEditor, FileEdit, EditOperation};
 use streaming::stream_with_tools;
-use prompts::get_system_prompt;
+use prompts::{get_system_prompt, get_system_prompt_with_mcp};
 
 #[derive(Parser)]
 #[command(name = "ocli")]
@@ -113,7 +113,7 @@ async fn chat_mode(client: &Client, model: &str, session: Option<&str>) -> Resul
         
         context.add_message("user".to_string(), input.to_string());
         
-        let system_prompt = format!("{}\n{}", get_system_prompt(), context.get_context_summary());
+        let system_prompt = format!("{}\n{}", get_system_prompt_with_mcp().await.unwrap_or_else(|_| get_system_prompt()), context.get_context_summary());
         let full_prompt = format!("{}\n\nUser: {}", system_prompt, input);
         
         let response = stream_with_tools(client, model, &full_prompt).await?;
