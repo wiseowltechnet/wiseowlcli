@@ -1,3 +1,4 @@
+mod errors;
 mod mcp;
 mod tui;
 mod lcars;
@@ -568,7 +569,14 @@ Use tools as needed and provide the result.", step.description);
         
         "exit" => return Ok(false),
         
-        _ => println!("❌ Unknown command: /{}", parts[0]),
+        _ => {
+                if let Some(suggestion) = crate::errors::suggest_command(parts[0]) {
+                    println!("❌ Unknown command: /{}", parts[0]);
+                    println!("💡 Did you mean: /{}?", suggestion);
+                } else {
+                    println!("❌ Unknown command: /{}", parts[0]);
+                }
+            }
     }
     
     Ok(true)

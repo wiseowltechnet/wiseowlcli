@@ -172,3 +172,18 @@ impl MCPClient {
         Err("No result from MCP server".into())
     }
 }
+
+impl MCPClient {
+    pub async fn call_tool_streaming<F>(&self, tool_name: &str, params: serde_json::Value, mut callback: F) -> Result<serde_json::Value, Box<dyn std::error::Error>>
+    where
+        F: FnMut(&str),
+    {
+        callback(&format!("⏳ Calling MCP tool: {}\n", tool_name));
+        
+        let result = self.call_tool(tool_name, params).await?;
+        
+        callback(&format!("✅ Tool completed\n"));
+        
+        Ok(result)
+    }
+}
