@@ -309,13 +309,6 @@ Use tools as needed and provide the result.", step.description);
             }
         }
         
-            if let Some(plan) = crate::planning::Plan::load("current").await? {
-                println!("{}", plan.display());
-            } else {
-                println!("📭 No active plan");
-            }
-        }
-        
         "todo" => {
             if parts.len() < 2 {
                 println!("❌ Usage: /todo <task>");

@@ -1,0 +1,54 @@
+{
+  "goal": "Create a REST API",
+  "steps": [
+    {
+      "number": 1,
+      "description": "Set up project structure",
+      "completed": false,
+      "result": null
+    },
+    {
+      "number": 2,
+      "description": "Add web framework dependencies",
+      "completed": false,
+      "result": null
+    },
+    {
+      "number": 3,
+      "description": "Create route handlers",
+      "completed": false,
+      "result": null
+    },
+    {
+      "number": 4,
+      "description": "Add database integration",
+      "completed": false,
+      "result": null
+    },
+    {
+      "number": 5,
+      "description": "Implement authentication",
+      "completed": false,
+      "result": null
+    },
+    {
+      "number": 6,
+      "description": "Add error handling",
+      "completed": false,
+      "result": null
+    },
+    {
+      "number": 7,
+      "description": "Write tests",
+      "completed": false,
+      "result": null
+    },
+    {
+      "number": 8,
+      "description": "Add documentation",
+      "completed": false,
+      "result": null
+    }
+  ],
+  "created_at": "2026-02-03T03:28:16.438098660+00:00"
+}
