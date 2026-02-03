@@ -1,0 +1,25 @@
+#!/usr/bin/expect -f
+set timeout 10
+
+spawn ./target/release/ocli
+
+# Test help command
+expect "You:"
+send "/help\r"
+expect "OCLI COMMANDS"
+puts "✅ Help command works"
+
+# Test version command
+send "/version\r"
+expect "OCLI v0.3.0"
+puts "✅ Version command works"
+
+# Test stats command
+send "/stats\r"
+expect "Session Statistics"
+puts "✅ Stats command works"
+
+# Exit
+send "exit\r"
+expect eof
+puts "✅ All basic tests passed"

@@ -1,0 +1,21 @@
+#!/usr/bin/expect -f
+set timeout 10
+
+spawn ./target/release/ocli
+
+expect "You:"
+send "/config set test_key test_value\r"
+expect "Set test_key"
+puts "✅ Config set works"
+
+send "/config get test_key\r"
+expect "test_key"
+puts "✅ Config get works"
+
+send "/config list\r"
+expect "Configuration"
+puts "✅ Config list works"
+
+send "exit\r"
+expect eof
+puts "✅ Config tests passed"

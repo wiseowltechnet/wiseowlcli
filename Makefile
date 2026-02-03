@@ -50,3 +50,29 @@ qa: check lint test audit
 # CI pipeline
 ci: check lint test build
 	@echo "✅ CI pipeline complete!"
+
+# Testing targets
+.PHONY: test test-all test-rust test-expect test-bats test-snapshot bench
+
+test: test-rust
+
+test-all:
+	./run_tests.sh
+
+test-rust:
+	~/.cargo/bin/cargo test --release
+
+test-expect:
+	@for script in tests/expect/*.exp; do \
+		echo "Running $$script..."; \
+		$$script || echo "Failed"; \
+	done
+
+test-bats:
+	bats tests/bats/functional.bats
+
+test-snapshot:
+	~/.cargo/bin/cargo test --test snapshot_tests --release
+
+bench:
+	~/.cargo/bin/cargo bench

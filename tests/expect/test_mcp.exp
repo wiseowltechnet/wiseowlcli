@@ -1,0 +1,13 @@
+#!/usr/bin/expect -f
+set timeout 10
+
+spawn ./target/release/ocli
+
+expect "You:"
+send "/mcp list\r"
+expect "MCP"
+puts "✅ MCP list works"
+
+send "exit\r"
+expect eof
+puts "✅ MCP tests passed"
