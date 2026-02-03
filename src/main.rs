@@ -78,6 +78,16 @@ async fn chat_mode(client: &Client, model: &str, session: Option<&str>) -> Resul
     println!("{}", crate::lcars::header());
     println!("{}", crate::lcars::status_bar(&format!("Model: {}", model), &format!("Session: {}", session_name)));
     println!("Type 'exit' or Ctrl+C to end");
+    // Show startup banner
+    let mut mcp_client = crate::mcp::MCPClient::new();
+    let mcp_count = if mcp_client.load_config().await.is_ok() && mcp_client.discover_tools().await.is_ok() {
+        mcp_client.list_available_tools().len()
+    } else { 0 };
+    
+    if mcp_count > 0 {
+        println!("🔌 {} MCP tools available", mcp_count);
+    }
+    println!("💡 Use /help for commands");
     println!("💡 Use /help for commands\n");
     
     if !context.messages.is_empty() {
@@ -139,24 +149,25 @@ async fn handle_slash_command(owl: &crate::wiseowl::WiseOwl,
     
     match parts[0] {
         "help" => {
-            println!("📋 Commands:");
-            println!("/plan <goal> - Create execution plan");
-            println!("/todo <task> - Add to TODO list");
-            println!("/done <task> - Mark task complete");
-            println!("/rule <rule> - Add project rule");
-            println!("/context - Show wiseowl context");
-            println!("/version - Show version");
-            println!("/next - Execute next plan step");
-            println!("/show-plan - Display current plan");
-            println!("📋 Commands:");
-            println!("/help - Show this");
-            println!("/read <file> - Read file into context");
-            println!("/write <file> - Write file with AI");
-            println!("/preview - Show pending changes");
-            println!("/apply - Apply pending changes");
-            println!("/rollback - Undo last change");
-            println!("/clear - Clear context");
-            println!("/exit - Exit");
+            use crate::lcars::*;
+            println!("{}╔═══════════════════════════════════════════════════════════════╗{}", ORANGE, RESET);
+            println!("{}║  {}OCLI COMMANDS{}                                                  {}║{}", ORANGE, BLUE, ORANGE, ORANGE, RESET);
+            println!("{}╚═══════════════════════════════════════════════════════════════╝{}", ORANGE, RESET);
+            println!("");
+            println!("{}📋 Planning{}", PURPLE, RESET);
+            println!("  /plan /next /show-plan");
+            println!("{}🔧 WiseOwl{}", PURPLE, RESET);
+            println!("  /todo /done /rule /context");
+            println!("{}📁 Files{}", PURPLE, RESET);
+            println!("  /read /write /preview /apply /rollback");
+            println!("{}🔌 MCP{}", PURPLE, RESET);
+            println!("  /mcp list | /mcp call <tool>");
+            println!("{}⚙️  Config{}", PURPLE, RESET);
+            println!("  /config list|set|get | /export");
+            println!("{}📊 Monitor{}", PURPLE, RESET);
+            println!("  /stats /monitor /git");
+            println!("{}ℹ️  Other{}", PURPLE, RESET);
+            println!("  /help /version /clear /exit");
         }
         
         "read" => {
@@ -530,7 +541,7 @@ Use tools as needed and provide the result.", step.description);
         }
         
         "version" => {
-            println!("🦉 OCLI v0.1.0");
+            println!("🦉 OCLI v0.2.0");
             println!("Claude Code-like interface for Ollama");
         }
         

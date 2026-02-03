@@ -1,0 +1,21 @@
+        "help" => {
+            use crate::lcars::*;
+            println!("{}╔═══════════════════════════════════════════════════════════════╗{}", ORANGE, RESET);
+            println!("{}║  {}OCLI COMMANDS{}                                                  {}║{}", ORANGE, BLUE, ORANGE, ORANGE, RESET);
+            println!("{}╚═══════════════════════════════════════════════════════════════╝{}", ORANGE, RESET);
+            println!("");
+            println!("{}📋 Planning{}", PURPLE, RESET);
+            println!("  /plan /next /show-plan");
+            println!("{}🔧 WiseOwl{}", PURPLE, RESET);
+            println!("  /todo /done /rule /context");
+            println!("{}📁 Files{}", PURPLE, RESET);
+            println!("  /read /write /preview /apply /rollback");
+            println!("{}🔌 MCP{}", PURPLE, RESET);
+            println!("  /mcp list | /mcp call <tool>");
+            println!("{}⚙️  Config{}", PURPLE, RESET);
+            println!("  /config list|set|get | /export");
+            println!("{}📊 Monitor{}", PURPLE, RESET);
+            println!("  /stats /monitor /git");
+            println!("{}ℹ️  Other{}", PURPLE, RESET);
+            println!("  /help /version /clear /exit");
+        }
