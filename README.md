@@ -1,5 +1,11 @@
 # 🦉 OCLI - Ollama Command Line Interface
 
+[![Release](https://img.shields.io/github/v/release/wiseowltechnet/ollama-ocli)](https://github.com/wiseowltechnet/ollama-ocli/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org)
+
+# 🦉 OCLI - Ollama Command Line Interface
+
 A Claude Code-like AI coding assistant with self-improvement capabilities, LCARS Star Trek styling, and full terminal UI control.
 
 ## ✨ Features
@@ -62,7 +68,7 @@ A Claude Code-like AI coding assistant with self-improvement capabilities, LCARS
 
 ### From Source
 ```bash
-git clone https://github.com/yourusername/ollama-ocli.git
+git clone https://github.com/wiseowltechnet/ollama-ocli.git
 cd ollama-ocli
 cargo build --release
 ./target/release/ocli
@@ -70,7 +76,7 @@ cargo build --release
 
 ### Homebrew (macOS/Linux)
 ```bash
-brew tap yourusername/ocli
+brew tap wiseowltechnet/ocli
 brew install ocli
 ```
 

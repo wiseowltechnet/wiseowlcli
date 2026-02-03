@@ -13,7 +13,7 @@ Thanks for your interest in contributing to OCLI! 🦉
 ## Development Setup
 
 ```bash
-git clone https://github.com/yourusername/ollama-ocli.git
+git clone https://github.com/wiseowltechnet/ollama-ocli.git
 cd ollama-ocli
 cargo build
 ./target/debug/ocli
