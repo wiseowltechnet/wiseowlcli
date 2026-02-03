@@ -63,7 +63,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     let client = Client::new();
     if args.version {
-        println!("🦉 OCLI v0.2.1");
+        println!("🦉 OCLI v0.3.0");
         return Ok(());
     }
 
@@ -641,7 +641,7 @@ Use tools as needed and provide the result.",
         }
 
         "version" => {
-            println!("🦉 OCLI v0.2.1");
+            println!("🦉 OCLI v0.3.0");
             println!("Claude Code-like interface for Ollama");
         }
 

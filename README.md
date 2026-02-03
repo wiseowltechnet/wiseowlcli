@@ -1,8 +1,10 @@
 # 🦉 OCLI - Ollama Command Line Interface
 
+
+[![CI](https://github.com/wiseowltechnet/ollama-ocli/workflows/CI/badge.svg)](https://github.com/wiseowltechnet/ollama-ocli/actions)
 [![Release](https://img.shields.io/github/v/release/wiseowltechnet/ollama-ocli)](https://github.com/wiseowltechnet/ollama-ocli/releases)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/wiseowltechnet/ollama-ocli/total)](https://github.com/wiseowltechnet/ollama-ocli/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org)
 
 # 🦉 OCLI - Ollama Command Line Interface
