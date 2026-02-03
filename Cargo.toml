@@ -12,3 +12,4 @@ clap = { version = "4.0", features = ["derive"] }
 futures-util = "0.3"
 tokio-fs = "0.1"
 chrono = { version = "0.4", features = ["serde"] }
+crossterm = "0.27"

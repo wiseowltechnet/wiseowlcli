@@ -1,3 +1,4 @@
+mod tui;
 mod lcars;
 mod git;
 mod stats;
