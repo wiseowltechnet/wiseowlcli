@@ -1,3 +1,4 @@
+mod git;
 mod stats;
 mod wiseowl;
 mod planning;
@@ -340,6 +341,48 @@ Use tools as needed and provide the result.", step.description);
             let rule = parts[1..].join(" ");
             owl.add_rule(&rule).await?;
             println!("✅ Added to RULES");
+        }
+        
+        "git" => {
+            if parts.len() < 2 {
+                println!("Usage: /git <status|diff|log|commit>");
+                return Ok(true);
+            }
+            match parts[1] {
+                "status" => {
+                    match crate::git::GitHelper::status() {
+                        Ok(s) => println!("📊 Git Status:
+{}", s),
+                        Err(e) => println!("❌ {}", e),
+                    }
+                }
+                "diff" => {
+                    match crate::git::GitHelper::diff() {
+                        Ok(d) => println!("📝 Git Diff:
+{}", d),
+                        Err(e) => println!("❌ {}", e),
+                    }
+                }
+                "log" => {
+                    match crate::git::GitHelper::log(10) {
+                        Ok(l) => println!("📜 Git Log:
+{}", l),
+                        Err(e) => println!("❌ {}", e),
+                    }
+                }
+                "commit" => {
+                    if parts.len() < 3 {
+                        println!("Usage: /git commit <message>");
+                        return Ok(true);
+                    }
+                    let msg = parts[2..].join(" ");
+                    match crate::git::GitHelper::commit(&msg) {
+                        Ok(r) => println!("✅ {}", r),
+                        Err(e) => println!("❌ {}", e),
+                    }
+                }
+                _ => println!("Unknown git command"),
+            }
         }
         
         "stats" => {

@@ -1,0 +1,16 @@
+#!/usr/bin/expect -f
+set timeout 10
+log_user 1
+
+spawn ./target/debug/ocli
+
+expect "You: "
+send "/git status\r"
+
+expect "You: "
+send "/git log\r"
+
+expect "You: "
+send "exit\r"
+
+expect eof
