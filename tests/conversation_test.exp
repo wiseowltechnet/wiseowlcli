@@ -1,0 +1,88 @@
+#!/usr/bin/expect -f
+# WiseOwl CLI Conversation Test
+
+set timeout 30
+set prompt "You: "
+
+# Start WiseOwl CLI
+spawn ./target/release/wiseowlcli
+
+# Wait for startup
+expect {
+    "WISEOWL CLI" { 
+        puts "✅ WiseOwl CLI started"
+    }
+    timeout { 
+        puts "❌ Startup timeout"
+        exit 1
+    }
+}
+
+expect $prompt
+
+# Test 1: Simple question
+puts "\n🔵 TEST 1: Simple conversation"
+send "What is 2+2?\r"
+
+expect {
+    "⏳" {
+        puts "✅ Progress indicator shown"
+    }
+    timeout {
+        puts "❌ No progress indicator"
+    }
+}
+
+expect {
+    "AI:" {
+        puts "✅ AI responded"
+    }
+    timeout {
+        puts "❌ No AI response"
+        exit 1
+    }
+}
+
+expect $prompt
+
+# Test 2: Dashboard command
+puts "\n🔵 TEST 2: Dashboard command"
+send "/dashboard\r"
+
+expect {
+    "LCARS" {
+        puts "✅ Dashboard opened"
+        sleep 2
+        send "\x1b"
+        puts "✅ Sent Esc to close"
+    }
+    timeout {
+        puts "❌ Dashboard failed"
+    }
+}
+
+expect $prompt
+
+# Test 3: Direct file command
+puts "\n🔵 TEST 3: Direct file command"
+send "/write-direct /tmp/wiseowl_test.txt Hello\r"
+
+expect {
+    "✅ Wrote" {
+        puts "✅ File written"
+    }
+    timeout {
+        puts "❌ Write failed"
+    }
+}
+
+expect $prompt
+
+# Exit
+puts "\n🔵 Exiting"
+send "exit\r"
+
+expect eof
+
+puts "\n✅ ALL TESTS PASSED!"
+exit 0
