@@ -124,3 +124,74 @@ mod tests {
         assert_eq!(stats.tokens_per_sec, 0.0);
     }
 }
+
+use crate::validator::CodeValidator;
+use crate::metrics::QualityMetrics;
+
+pub struct ValidatedStream {
+    validator: CodeValidator,
+    metrics: QualityMetrics,
+}
+
+impl ValidatedStream {
+    pub fn new() -> Self {
+        Self {
+            validator: CodeValidator::new(),
+            metrics: QualityMetrics::new(),
+        }
+    }
+    
+    pub fn validate_code(&mut self, code: &str, language: &str) -> bool {
+        let valid = self.validator.validate(code, language);
+        self.metrics.record_syntax(language, valid);
+        valid
+    }
+    
+    pub fn record_build(&mut self, success: bool) {
+        self.metrics.record_build(success);
+    }
+    
+    pub fn metrics_summary(&self) -> String {
+        self.metrics.summary()
+    }
+    
+    pub fn syntax_success_rate(&self) -> f64 {
+        self.metrics.syntax_success_rate()
+    }
+}
+
+#[cfg(test)]
+mod validated_tests {
+    use super::*;
+
+    #[test]
+    fn test_validated_stream_new() {
+        let stream = ValidatedStream::new();
+        assert_eq!(stream.syntax_success_rate(), 0.0);
+    }
+
+    #[test]
+    fn test_validate_code() {
+        let mut stream = ValidatedStream::new();
+        assert!(stream.validate_code("fn main() {}", "rust"));
+        assert_eq!(stream.syntax_success_rate(), 1.0);
+    }
+
+    #[test]
+    fn test_record_build() {
+        let mut stream = ValidatedStream::new();
+        stream.record_build(true);
+        stream.record_build(false);
+        let summary = stream.metrics_summary();
+        assert!(summary.contains("1/2"));
+    }
+
+    #[test]
+    fn test_metrics_summary() {
+        let mut stream = ValidatedStream::new();
+        stream.validate_code("fn main() {}", "rust");
+        stream.record_build(true);
+        let summary = stream.metrics_summary();
+        assert!(summary.contains("100.0%"));
+    }
+}

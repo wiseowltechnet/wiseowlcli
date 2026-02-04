@@ -3,3 +3,4 @@ pub mod cache;
 pub mod streaming;
 pub mod validator;
 pub mod metrics;
+pub mod build_verifier;
