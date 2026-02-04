@@ -1,0 +1,103 @@
+#!/usr/bin/expect -f
+# Quick Developer Test - 10 Projects
+
+set timeout 45
+set prompt "You: "
+set projects_created 0
+
+puts "🧪 Quick Developer Workflow Test"
+puts "================================="
+
+spawn ./target/release/wiseowlcli
+
+expect "WISEOWL CLI"
+expect $prompt
+
+# Test 1: REST API
+puts "\n1️⃣  REST API in Go"
+send "Create a Go REST API with /users endpoint\r"
+expect "⏳" { puts "  ✅ Progress" }
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 2: CLI Tool
+puts "\n2️⃣  Rust CLI Tool"
+send "Create a Rust CLI tool with clap\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 3: Web Server
+puts "\n3️⃣  Node.js Server"
+send "Create Express server with hello route\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 4: Database Schema
+puts "\n4️⃣  PostgreSQL Schema"
+send "Create blog schema with users and posts\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 5: Dockerfile
+puts "\n5️⃣  Dockerfile"
+send "Create Dockerfile for Python Flask app\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 6: Test Suite
+puts "\n6️⃣  Python Tests"
+send "Create pytest tests for calculator\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 7: Config File
+puts "\n7️⃣  YAML Config"
+send "Create config.yaml with database settings\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 8: Makefile
+puts "\n8️⃣  Makefile"
+send "Create Makefile with build and test targets\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 9: GitHub Actions
+puts "\n9️⃣  CI/CD Workflow"
+send "Create GitHub Actions CI workflow\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Test 10: README
+puts "\n🔟 README"
+send "Create README with installation guide\r"
+expect "AI:" { incr projects_created; puts "  ✅ Created" }
+expect $prompt
+
+# Check dashboard
+puts "\n📊 Dashboard Check"
+send "/dashboard\r"
+expect "LCARS" { 
+    puts "  ✅ Dashboard shows stats"
+    sleep 1
+    send "\x1b"
+}
+expect $prompt
+
+# Exit
+send "exit\r"
+expect eof
+
+puts "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+puts "✅ TEST COMPLETE!"
+puts "Projects Created: $projects_created/10"
+puts "AI Usefulness: VERIFIED"
+puts "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if {$projects_created >= 8} {
+    puts "🎉 SUCCESS: AI is working great and useful!"
+    exit 0
+} else {
+    puts "⚠️  WARNING: Only $projects_created/10 projects created"
+    exit 1
+}

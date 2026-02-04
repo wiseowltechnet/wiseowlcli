@@ -4,6 +4,36 @@
 
 Uses `expect` for interactive conversation testing with the CLI.
 
+## Test Suites
+
+### 1. Conversation Test (`conversation_test.exp`)
+Basic functionality testing:
+- ✅ CLI startup
+- ✅ Simple conversation
+- ✅ Progress indicator
+- ✅ Dashboard command
+- ✅ Direct file commands
+
+### 2. Developer Workflow Test (`developer_workflow_test.exp`)
+Comprehensive project creation test:
+- ✅ REST API (Go)
+- ✅ CLI Tool (Rust)
+- ✅ Web Server (Node.js)
+- ✅ Database Schema (PostgreSQL)
+- ✅ Dockerfile
+- ✅ Test Suite (Python)
+- ✅ Config File (YAML)
+- ✅ Makefile
+- ✅ GitHub Actions
+- ✅ README
+
+### 3. Quick Dev Test (`quick_dev_test.exp`)
+Fast validation of AI usefulness:
+- Tests 10 different project types
+- Verifies AI responses
+- Checks dashboard stats
+- Pass criteria: 8/10 projects created
+
 ## Running Tests
 
 ```bash
@@ -12,41 +42,54 @@ Uses `expect` for interactive conversation testing with the CLI.
 
 # Run specific test
 ./tests/conversation_test.exp
+./tests/developer_workflow_test.exp
+./tests/quick_dev_test.exp
 ```
-
-## Test Coverage
-
-### Conversation Test (`conversation_test.exp`)
-- ✅ CLI startup
-- ✅ Simple conversation (What is 2+2?)
-- ✅ Progress indicator display
-- ✅ AI response
-- ✅ Dashboard command
-- ✅ Direct file commands
-- ✅ Clean exit
 
 ## Test Structure
 
 ```expect
 #!/usr/bin/expect -f
 
-set timeout 30
+set timeout 45
+set prompt "You: "
+
 spawn ./target/release/wiseowlcli
 
-# Test pattern
-expect "pattern" {
-    puts "✅ Test passed"
-}
+expect "WISEOWL CLI"
+expect $prompt
 
-send "command\r"
+# Test pattern
+send "Create something\r"
+expect "AI:" {
+    puts "✅ AI responded"
+}
 expect $prompt
 ```
+
+## Success Criteria
+
+### Conversation Test
+- All basic commands work
+- Dashboard opens
+- Clean exit
+
+### Developer Workflow Test
+- AI creates 10 different project types
+- Files are generated
+- Dashboard shows stats
+
+### Quick Dev Test
+- At least 8/10 projects created successfully
+- AI responses are useful
+- Performance metrics tracked
 
 ## Adding New Tests
 
 1. Create new `.exp` file in `tests/`
-2. Add to `run_tests.sh`
-3. Follow existing test patterns
+2. Follow existing test patterns
+3. Add to `run_tests.sh`
+4. Document in this README
 
 ## Requirements
 
@@ -64,8 +107,34 @@ expect $prompt
     ./tests/run_tests.sh
 ```
 
+## Test Philosophy
+
+**TDD First** - Tests define expected behavior
+- Write test before feature
+- Test actual user workflows
+- Verify AI usefulness
+- Catch regressions early
+
 ## Known Limitations
 
 - Requires interactive terminal
 - Depends on Ollama response time
 - May timeout on slow systems
+- AI responses vary (non-deterministic)
+
+## Troubleshooting
+
+**Test timeouts:**
+- Increase timeout value
+- Check Ollama is running
+- Verify model is loaded
+
+**AI not responding:**
+- Check Ollama logs
+- Verify model availability
+- Test with simpler prompts
+
+**Dashboard not opening:**
+- Check terminal size (>= 80x24)
+- Verify ratatui dependencies
+- Test with `/dashboard` manually

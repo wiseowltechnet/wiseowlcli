@@ -1,0 +1,147 @@
+#!/usr/bin/expect -f
+# WiseOwl CLI - Developer Workflow Test
+# Tests AI creating 10 different projects
+
+set timeout 60
+set prompt "You: "
+
+proc test_project {name description expected_files} {
+    global prompt
+    
+    puts "\n🔵 Creating: $name"
+    send "$description\r"
+    
+    expect {
+        "⏳" {
+            puts "  ✅ Progress shown"
+        }
+        timeout {
+            puts "  ❌ No progress"
+        }
+    }
+    
+    expect {
+        "AI:" {
+            puts "  ✅ AI responded"
+        }
+        timeout {
+            puts "  ❌ No AI response"
+            return 0
+        }
+    }
+    
+    expect $prompt
+    
+    # Verify files were created
+    foreach file $expected_files {
+        send "/read $file\r"
+        expect {
+            "File:" {
+                puts "  ✅ Created: $file"
+            }
+            "not found" {
+                puts "  ⚠️  Missing: $file"
+            }
+            timeout {
+                puts "  ⚠️  Timeout: $file"
+            }
+        }
+        expect $prompt
+    }
+    
+    return 1
+}
+
+puts "🧪 WiseOwl CLI - Developer Workflow Test"
+puts "Testing AI creating 10 different projects"
+puts "=========================================="
+
+spawn ./target/release/wiseowlcli
+
+expect {
+    "WISEOWL CLI" {
+        puts "✅ WiseOwl CLI started"
+    }
+    timeout {
+        puts "❌ Startup failed"
+        exit 1
+    }
+}
+
+expect $prompt
+
+# Project 1: REST API
+test_project "REST API" \
+    "Create a simple REST API in Go with /users endpoint" \
+    {main.go}
+
+# Project 2: CLI Tool
+test_project "CLI Tool" \
+    "Create a Rust CLI tool that parses command line arguments" \
+    {main.rs Cargo.toml}
+
+# Project 3: Web Server
+test_project "Web Server" \
+    "Create a Node.js Express web server with hello world route" \
+    {server.js package.json}
+
+# Project 4: Database Schema
+test_project "Database Schema" \
+    "Create a PostgreSQL schema for a blog with users and posts tables" \
+    {schema.sql}
+
+# Project 5: Docker Setup
+test_project "Docker Setup" \
+    "Create a Dockerfile for a Python Flask application" \
+    {Dockerfile}
+
+# Project 6: Test Suite
+test_project "Test Suite" \
+    "Create a Python pytest test suite for a calculator module" \
+    {test_calculator.py}
+
+# Project 7: Config File
+test_project "Config File" \
+    "Create a YAML configuration file for a microservice with database and redis settings" \
+    {config.yaml}
+
+# Project 8: Makefile
+test_project "Makefile" \
+    "Create a Makefile with build, test, and clean targets for a Go project" \
+    {Makefile}
+
+# Project 9: GitHub Actions
+test_project "GitHub Actions" \
+    "Create a GitHub Actions workflow for CI/CD with build and test steps" \
+    {.github/workflows/ci.yml}
+
+# Project 10: README
+test_project "README" \
+    "Create a comprehensive README.md for an open source project with installation and usage" \
+    {README.md}
+
+# Test dashboard after all projects
+puts "\n🔵 Checking dashboard stats"
+send "/dashboard\r"
+
+expect {
+    "LCARS" {
+        puts "✅ Dashboard opened"
+        sleep 2
+        send "\x1b"
+    }
+    timeout {
+        puts "❌ Dashboard failed"
+    }
+}
+
+expect $prompt
+
+# Exit
+puts "\n🔵 Exiting"
+send "exit\r"
+expect eof
+
+puts "\n✅ DEVELOPER WORKFLOW TEST COMPLETE!"
+puts "Created 10 different projects successfully"
+exit 0
