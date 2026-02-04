@@ -14,7 +14,7 @@ mod dashboard_integration;
 mod cache;
 mod git;
 mod lcars;
-mod mcp;
+pub mod mcp;
 mod multi_file;
 mod planning;
 mod prompts;

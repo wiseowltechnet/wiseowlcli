@@ -1,5 +1,9 @@
 [package]
 name = "wiseowlcli"
+
+[lib]
+name = "wiseowlcli"
+path = "src/lib.rs"
 version = "0.3.2"
 edition = "2021"
 authors = ["WiseOwl Tech <contact@wiseowltech.net>"]

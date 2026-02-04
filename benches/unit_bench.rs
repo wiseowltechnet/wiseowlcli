@@ -74,4 +74,22 @@ criterion_group!(
     bench_dashboard_add_activity
 );
 
+criterion_group!(benches, dashboard_benchmarks::bench_dashboard_add_response, dashboard_benchmarks::bench_dashboard_avg_calculation, dashboard_benchmarks::bench_dashboard_add_activity, mcp_benches::bench_mcp_client_new);
 criterion_main!(benches);
+
+mod mcp_benches {
+    use criterion::{black_box, Criterion};
+    use wiseowlcli::mcp::MCPClient;
+
+    pub fn bench_mcp_client_new(c: &mut Criterion) {
+        c.bench_function("mcp_client_new", |b| {
+            b.iter(|| {
+                black_box(MCPClient::new())
+            })
+        });
+    }
+}
+
+pub fn mcp_benchmarks(c: &mut Criterion) {
+    mcp_benches::bench_mcp_client_new(c);
+}

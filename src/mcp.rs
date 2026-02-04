@@ -2,21 +2,21 @@ use serde::{Deserialize, Serialize};
 use std::io::{BufRead, BufReader, Write};
 use std::process::{Command, Stdio};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPServer {
     pub name: String,
     pub command: String,
     pub args: Vec<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPTool {
     pub name: String,
     pub description: String,
     pub server: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MCPRequest {
     jsonrpc: String,
     id: u32,
@@ -24,7 +24,7 @@ struct MCPRequest {
     params: serde_json::Value,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MCPResponse {
     jsonrpc: String,
     id: u32,
@@ -201,9 +201,6 @@ impl MCPClient {
 
         Err("No result from MCP server".into())
     }
-}
-
-impl MCPClient {
     pub async fn call_tool_streaming<F>(
         &self,
         tool_name: &str,
@@ -214,11 +211,63 @@ impl MCPClient {
         F: FnMut(&str),
     {
         callback(&format!("⏳ Calling MCP tool: {}\n", tool_name));
-
         let result = self.call_tool(tool_name, params).await?;
-
         callback(&"✅ Tool completed\n".to_string());
-
         Ok(result)
+    }
+
+    pub async fn call_tools_parallel(
+        &self,
+        tool_calls: Vec<(&str, serde_json::Value)>,
+    ) -> Vec<Result<serde_json::Value, String>> {
+        use tokio::time::{timeout, Duration};
+        
+        let handles: Vec<_> = tool_calls
+            .into_iter()
+            .map(|(name, params)| {
+                let name = name.to_string();
+                let params = params.clone();
+                let tools = self.tools.clone();
+                let servers = self.servers.clone();
+                
+                tokio::spawn(async move {
+                    let client = MCPClient { servers, tools };
+                    match timeout(Duration::from_secs(30), client.call_tool(&name, params)).await {
+                        Ok(Ok(result)) => Ok(result),
+                        Ok(Err(e)) => Err(e.to_string()),
+                        Err(_) => Err(format!("Timeout calling {}", name)),
+                    }
+                })
+            })
+            .collect();
+
+        let mut results = Vec::new();
+        for handle in handles {
+            results.push(handle.await.unwrap_or_else(|e| Err(e.to_string())));
+        }
+        results
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_parallel_execution() {
+        let client = MCPClient::new();
+        let calls = vec![
+            ("tool1", serde_json::json!({})),
+            ("tool2", serde_json::json!({})),
+        ];
+        let results = client.call_tools_parallel(calls).await;
+        assert_eq!(results.len(), 2);
+    }
+
+    #[test]
+    fn test_mcp_client_new() {
+        let client = MCPClient::new();
+        assert_eq!(client.servers.len(), 0);
+        assert_eq!(client.tools.len(), 0);
     }
 }
