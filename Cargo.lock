@@ -2605,6 +2605,7 @@ dependencies = [
  "futures-util",
  "indicatif",
  "insta",
+ "lru",
  "ratatui",
  "reqwest",
  "rustyline",

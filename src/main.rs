@@ -11,6 +11,7 @@ mod errors;
 mod dashboard;
 mod lcars_tui;
 mod dashboard_integration;
+mod cache;
 mod git;
 mod lcars;
 mod mcp;
