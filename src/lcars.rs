@@ -11,7 +11,7 @@ pub const BOLD: &str = "\x1b[1m";
 pub fn header() -> String {
     format!(
         "{}╔═══════════════════════════════════════════════════════════════╗\n\
-         ║  {}LCARS{}  {}OLLAMA CLI{}                                          ║\n\
+         ║  {}LCARS{}  {}WISEOWL CLI{}                                          ║\n\
          ╚═══════════════════════════════════════════════════════════════╝{}",
         ORANGE, BLUE, ORANGE, YELLOW, ORANGE, RESET
     )

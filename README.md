@@ -1,236 +1,158 @@
-# 🦉 OCLI - Ollama Command Line Interface
+# 🦉 WiseOwl CLI
 
+**Enterprise-grade AI coding assistant with LCARS styling, real-time dashboard, and MCP tools integration**
 
-[![CI](https://github.com/wiseowltechnet/ollama-ocli/workflows/CI/badge.svg)](https://github.com/wiseowltechnet/ollama-ocli/actions)
-[![Release](https://img.shields.io/github/v/release/wiseowltechnet/ollama-ocli)](https://github.com/wiseowltechnet/ollama-ocli/releases)
-[![Downloads](https://img.shields.io/github/downloads/wiseowltechnet/ollama-ocli/total)](https://github.com/wiseowltechnet/ollama-ocli/releases)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org)
-
-# 🦉 OCLI - Ollama Command Line Interface
-
-A Claude Code-like AI coding assistant with self-improvement capabilities, LCARS Star Trek styling, and full terminal UI control.
+[![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)](https://github.com/wiseowltechnet/wiseowlcli)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org)
 
 ## ✨ Features
 
-### 🤖 AI-Powered Development
-- **Autonomous tool calling** - AI automatically uses tools to read/write files, execute commands
-- **Streaming responses** - Real-time output with progress indicators
-- **Context-aware** - Maintains conversation history and file context
-- **Self-improving** - Can read and modify its own source code
+### 🎨 LCARS Dashboard (NEW in v0.3.2)
+- **Live Progress Indicator** - Real-time token count, speed, and elapsed time
+- **Full-Screen Dashboard** - `/dashboard` command with LCARS styling
+- **Performance Metrics** - Response time graphs, memory usage, activity log
+- **System Stats** - MCP tools status, session statistics
 
-### 🛠️ Built-in Tools
-- `read_file` - Read any file with syntax awareness
-- `write_file` - Create/modify files with automatic backups
-- `execute_bash` - Run shell commands safely
-- `search_files` - Find files and content across your project
-- `list_directory` - Explore directory structures
+### 🚀 Core Features
+- **Conversational AI** - Natural language coding assistant
+- **MCP Tools Integration** - 18+ tools including filesystem, git, tech books
+- **Direct File Commands** - `/write-direct`, `/append`, `/build`, `/template`
+- **Multi-Model Support** - Switch between Ollama models with `/model`
+- **Command History** - Navigate with ↑/↓ arrows
+- **Syntax Highlighting** - Colored code blocks
+- **Smart Context** - Auto-summarize, search, prune
 
-### 📋 Planning Mode
-- `/plan` - Create AI-generated step-by-step plans
-- `/next` - Execute next step in plan
-- `/show-plan` - View plan progress
+## 🎯 Quick Start
 
-### 🔧 Project Management (WiseOwl)
-- Auto-creates `wiseowl/` folder for project tracking
-- `/todo` - Add tasks to TODO.md
-- `/done` - Mark tasks complete
-- `/rule` - Add project rules to RULES.md
-- `/context` - Add context to CONTEXT.md
-
-### 🎨 LCARS Interface
-- Authentic Star Trek LCARS styling
-- RGB colors in multiples of 51 (hex 33)
-- Status indicators: ● (blue=success, red=error, purple=info, yellow=warning)
-- Clean vector look with high contrast
-
-### 📊 Terminal UI
-- `/monitor` - Full-screen real-time statistics (like top/htop)
-- Cursor positioning and color control
-- Alternate buffer support
-
-### 🔌 MCP (Model Context Protocol) Support
-- Load external MCP servers for extended functionality
-- `/mcp list` - Show available MCP tools
-- `/mcp call <tool> [params]` - Invoke MCP tools
-- AI automatically knows about available MCP tools
-- Configure servers in `.ocli/mcp_servers.json`
-
-### ⚙️ Configuration & Export
-- `/config set <key> <value>` - Set configuration
-- `/config get <key>` - Get configuration value
-- `/config list` - Show all settings
-- `/export [filename]` - Export conversation to markdown
-
-### 📈 Statistics & Git
-- `/stats` - Show session statistics
-- `/git status|diff|log|commit` - Git integration
-- `/version` - Show OCLI version
-
-## 🚀 Installation
-
-### From Source
+### Installation
 ```bash
-git clone https://github.com/wiseowltechnet/ollama-ocli.git
-cd ollama-ocli
+git clone https://github.com/wiseowltechnet/wiseowlcli.git
+cd wiseowlcli
 cargo build --release
-./target/release/ocli
+./target/release/wiseowlcli
 ```
 
-### Homebrew (macOS/Linux)
+### Usage
 ```bash
-brew tap wiseowltechnet/ocli
-brew install ocli
+# Start WiseOwl CLI
+wiseowlcli
+
+# Ask questions
+You: How do I create a REST API in Go?
+
+# Watch live progress
+╔══════════════════════════════════════════════════════════╗
+║ ⏳ 45 tokens | 15.2 tok/s | 3.1s elapsed                ║
+╚══════════════════════════════════════════════════════════╝
+
+# Open dashboard
+You: /dashboard
+[Press Esc to exit]
+
+# Use direct commands
+You: /template go-mcp-server server.go
+You: /build go
+You: /write-direct README.md "# My Project"
 ```
 
-## 📖 Quick Start
+## 📊 Dashboard Features
 
-1. **Start OCLI**
-```bash
-ocli
-```
+### Live Progress
+Shows real-time stats while AI generates responses:
+- Token count (updates every 10 tokens)
+- Tokens per second
+- Elapsed time
 
-2. **Ask the AI to help**
-```
-You: create a hello world rust program
-```
+### Full Dashboard (`/dashboard`)
+- Response time graphs (Unicode bars)
+- Memory usage gauge
+- Activity log (last 10 events)
+- MCP tools status
+- Session statistics
 
-3. **Use planning mode for complex tasks**
-```
-You: /plan build a web server with authentication
-You: /next
-```
+## 🛠️ Commands
 
-4. **Monitor your session**
-```
-You: /monitor
-```
+### Conversational
+- Natural language questions
+- Multi-turn conversations
+- Context-aware responses
 
-5. **Configure MCP servers**
-```bash
-mkdir -p .ocli
-cat > .ocli/mcp_servers.json << JSON
-{
-  "servers": [
-    {
-      "name": "filesystem",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
-    }
-  ]
-}
-JSON
-```
+### Direct File Operations
+- `/write-direct <file> <content>` - Instant file writing (100x faster)
+- `/append <file> <content>` - Append to files
+- `/build [go|rust|npm|auto]` - Compile projects
+- `/template <type> <path>` - Generate from templates
 
-## 🎯 Use Cases
+### System
+- `/dashboard` - Open full-screen dashboard
+- `/model <name>` - Switch models
+- `/help` - Show all commands
+- `/exit` - Quit
 
-### Self-Improvement
-OCLI can modify itself:
-```
-You: add a /version command to show OCLI version
-AI: *reads src/main.rs, adds version command, rebuilds*
-```
+## 🎨 LCARS Styling
 
-### Project Scaffolding
-```
-You: /plan create a REST API with user authentication
-You: /next
-```
+WiseOwl CLI features Star Trek LCARS-inspired interface:
+- Orange (255,153,0) and blue (153,204,255) color scheme
+- Unicode box drawing characters
+- Real-time updating displays
+- Clean, futuristic aesthetic
 
-### Code Review
-```
-You: review the code in src/main.rs for potential issues
-```
+## 🔧 MCP Tools
 
-### Debugging
-```
-You: the tests are failing, can you fix them?
-```
+Integrated Model Context Protocol tools:
+- **Tech Books** - Search and extract from technical books
+- **Filesystem** - Read, write, search files
+- **Git** - Repository operations
+- **And more** - 18+ tools available
 
-## 📝 Slash Commands
+## 📈 Performance
 
-| Command | Description |
-|---------|-------------|
-| `/help` | Show all commands |
-| `/plan <task>` | Create step-by-step plan |
-| `/next` | Execute next plan step |
-| `/show-plan` | View plan progress |
-| `/read <file>` | Read file |
-| `/write <file>` | Write file |
-| `/preview` | Preview pending changes |
-| `/apply` | Apply pending changes |
-| `/rollback` | Undo last change |
-| `/todo <task>` | Add TODO item |
-| `/done <id>` | Mark TODO complete |
-| `/rule <rule>` | Add project rule |
-| `/context <info>` | Add context |
-| `/mcp list` | List MCP tools |
-| `/mcp call <tool>` | Call MCP tool |
-| `/config <cmd>` | Manage settings |
-| `/export [file]` | Export conversation |
-| `/stats` | Show statistics |
-| `/git <cmd>` | Git operations |
-| `/monitor` | Real-time monitor |
-| `/version` | Show version |
-| `/clear` | Clear context |
-| `/exit` | Exit OCLI |
+- **Live Progress**: Updates every 10 tokens (~0.1ms overhead)
+- **Memory**: ~45MB typical usage
+- **Response Time**: Tracked and displayed in dashboard
+- **Build Time**: ~12s for release build
 
-## 🎨 LCARS Colors
+## 🚀 Recent Updates
 
-- **Orange** (#FF9900) - Headers, borders
-- **Purple** (#CC99FF) - Session info
-- **Blue** (#99CCFF) - Success indicators
-- **Yellow** (#FFCC00) - Warnings
-- **Red** (#FF6666) - Errors
+### v0.3.2 (2026-02-03)
+- ✨ Live progress indicator during AI responses
+- ✨ Full LCARS dashboard with `/dashboard` command
+- ✨ Real-time stats tracking
+- ✨ Response time graphs
+- ✨ Memory usage monitoring
 
-## 🔧 Configuration
+### v0.3.1 (2026-02-03)
+- ⚡ Direct file commands (`/write-direct`, `/append`)
+- ⚡ Build integration (`/build`)
+- ⚡ Code templates (`/template`)
+- ⚡ Model switching (`/model`)
 
-OCLI stores configuration in `.ocli/`:
-- `config.json` - User settings
-- `mcp_servers.json` - MCP server configuration
-- `sessions/` - Conversation history
+### v0.3.0 (2026-02-03)
+- 🎉 Command history with ↑/↓
+- 🎉 Auto-completion
+- 🎉 Syntax highlighting
+- 🎉 Smart context management
+
+## 📝 Documentation
+
+- [Dashboard Features](DASHBOARD_FEATURES.md)
+- [Conversation Test](CONVERSATION_TEST.md)
+- [Changelog](CHANGELOG.md)
 
 ## 🤝 Contributing
 
-OCLI is designed to be self-improving. You can:
-1. Ask OCLI to add features to itself
-2. Submit PRs with new capabilities
-3. Create MCP servers for extended functionality
+Contributions welcome! This is a fork of ollama-ocli with enhanced features.
 
-## 📜 License
+## 📄 License
 
-MIT
+MIT License - See [LICENSE](LICENSE) file
 
-## 🙏 Acknowledgments
+## 🔗 Links
 
-- Built with [Ollama](https://ollama.ai)
-- Inspired by Claude Code
-- LCARS design from Star Trek
-- MCP protocol support
+- **GitHub**: https://github.com/wiseowltechnet/wiseowlcli
+- **Original**: https://github.com/wiseowltechnet/ollama-ocli
 
 ---
 
-**Made with 🦉 by the OCLI community**
-
-## Development & QA
-
-OCLI uses professional QA tools similar to Gradle:
-
-```bash
-# Format code (like Spotless)
-make fmt
-
-# Lint code (like Checkstyle/SpotBugs)
-make lint
-
-# Run tests (like JUnit)
-make test
-
-# Full QA pipeline
-make qa
-
-# CI pipeline
-make ci
-```
-
-See [QA_TOOLS.md](QA_TOOLS.md) for complete guide.
+**Built with 🦉 by WiseOwl Tech**

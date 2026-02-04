@@ -1152,28 +1152,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "830b246a0e5f20af87141b25c173cd1b609bd7779a4617d6ec582abaf90870f3"
 
 [[package]]
-name = "ocli"
-version = "0.3.1"
-dependencies = [
- "chrono",
- "clap",
- "criterion",
- "crossterm",
- "futures-util",
- "indicatif",
- "insta",
- "ratatui",
- "reqwest",
- "rustyline",
- "serde",
- "serde_derive",
- "serde_json",
- "syntect",
- "sysinfo",
- "tokio",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.21.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2614,6 +2592,28 @@ checksum = "524e57b2c537c0f9b1e69f1965311ec12182b4122e45035b1508cd24d2adadb1"
 dependencies = [
  "cfg-if",
  "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "wiseowlcli"
+version = "0.3.2"
+dependencies = [
+ "chrono",
+ "clap",
+ "criterion",
+ "crossterm",
+ "futures-util",
+ "indicatif",
+ "insta",
+ "ratatui",
+ "reqwest",
+ "rustyline",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "syntect",
+ "sysinfo",
+ "tokio",
 ]
 
 [[package]]

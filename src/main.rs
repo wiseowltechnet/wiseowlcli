@@ -36,8 +36,8 @@ use std::path::Path;
 use streaming::stream_with_tools;
 
 #[derive(Parser)]
-#[command(name = "ocli")]
-#[command(about = "Ollama CLI - A Claude Code-like interface")]
+#[command(name = "wiseowlcli")]
+#[command(about = "WiseOwl CLI - A Claude Code-like interface")]
 struct Args {
     #[arg(short, long, default_value = "deepseek-coder:6.7b")]
     model: String,
@@ -66,7 +66,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     let client = Client::new();
     if args.version {
-        println!("🦉 OCLI v0.3.0");
+        println!("🦉 WiseOwl CLI v0.3.2");
         return Ok(());
     }
 
@@ -497,7 +497,7 @@ if __name__ == "__main__":
             let new_model = parts[1..].join(" ");
             
             // Save to config
-            let config_path = std::path::PathBuf::from(std::env::var("HOME").unwrap()).join(".ocli/config.json");
+            let config_path = std::path::PathBuf::from(std::env::var("HOME").unwrap()).join(".wiseowlcli/config.json");
             let mut config = if let Ok(content) = tokio::fs::read_to_string(&config_path).await {
                 serde_json::from_str(&content).unwrap_or_else(|_| serde_json::json!({}))
             } else {
@@ -740,7 +740,7 @@ Use tools as needed and provide the result.",
 
                     let tools = mcp_client.list_available_tools();
                     if tools.is_empty() {
-                        println!("No MCP tools available. Add servers to .ocli/mcp_servers.json");
+                        println!("No MCP tools available. Add servers to .wiseowlcli/mcp_servers.json");
                     } else {
                         println!("Available MCP Tools:");
                         for tool in tools {
@@ -828,7 +828,7 @@ Use tools as needed and provide the result.",
                 return Ok(true);
             }
 
-            let config_file = std::env::current_dir()?.join(".ocli").join("config.json");
+            let config_file = std::env::current_dir()?.join(".wiseowlcli").join("config.json");
 
             match parts[1] {
                 "list" => {
@@ -881,7 +881,7 @@ Use tools as needed and provide the result.",
         }
 
         "version" => {
-            println!("🦉 OCLI v0.3.0");
+            println!("🦉 WiseOwl CLI v0.3.2");
             println!("Claude Code-like interface for Ollama");
         }
 
@@ -945,7 +945,7 @@ Use tools as needed and provide the result.",
         
 
         "history" => {
-            let sessions_dir = std::env::current_dir()?.join(".ocli").join("sessions");
+            let sessions_dir = std::env::current_dir()?.join(".wiseowlcli").join("sessions");
             if sessions_dir.exists() {
                 println!("📜 Conversation History:");
                 let mut entries: Vec<_> = std::fs::read_dir(&sessions_dir)?
@@ -969,7 +969,7 @@ Use tools as needed and provide the result.",
                 return Ok(true);
             }
             
-            let config_file = std::env::current_dir()?.join(".ocli").join("aliases.json");
+            let config_file = std::env::current_dir()?.join(".wiseowlcli").join("aliases.json");
             
             match parts[1] {
                 "list" => {
@@ -1054,10 +1054,10 @@ async fn init_project_mode(client: &Client, model: &str) -> Result<(), Box<dyn s
 
     send_prompt_and_stream_response(client, model, &prompt).await?;
 
-    let ocli_dir = current_dir.join(".ocli");
-    tokio::fs::create_dir_all(&ocli_dir).await?;
+    let wiseowlcli_dir = current_dir.join(".wiseowlcli");
+    tokio::fs::create_dir_all(&wiseowlcli_dir).await?;
 
-    let context_file = ocli_dir.join("project.json");
+    let context_file = wiseowlcli_dir.join("project.json");
     let context_data = serde_json::json!({
         "timestamp": chrono::Utc::now().to_rfc3339(),
         "directory": current_dir.to_string_lossy(),
@@ -1065,7 +1065,7 @@ async fn init_project_mode(client: &Client, model: &str) -> Result<(), Box<dyn s
     });
 
     tokio::fs::write(context_file, serde_json::to_string_pretty(&context_data)?).await?;
-    println!("\n💾 Project context saved to .ocli/project.json");
+    println!("\n💾 Project context saved to .wiseowlcli/project.json");
 
     Ok(())
 }
@@ -1233,7 +1233,7 @@ async fn plan_mode(
     println!("{}", plan.display());
 
     plan.save("current").await?;
-    println!("💾 Plan saved. Use 'ocli chat --session current' to execute it.");
+    println!("💾 Plan saved. Use 'wiseowlcli chat --session current' to execute it.");
 
     Ok(())
 }
