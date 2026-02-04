@@ -56,3 +56,73 @@ impl DashboardStats {
         self.start_time.elapsed()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::Duration;
+
+    #[test]
+    fn test_new_dashboard_stats() {
+        let stats = DashboardStats::new();
+        assert_eq!(stats.response_times.len(), 0);
+        assert_eq!(stats.token_count, 0);
+        assert_eq!(stats.turn_count, 0);
+    }
+
+    #[test]
+    fn test_add_response_time() {
+        let mut stats = DashboardStats::new();
+        stats.add_response_time(Duration::from_secs(3));
+        assert_eq!(stats.response_times.len(), 1);
+        assert_eq!(stats.response_times[0], 3.0);
+    }
+
+    #[test]
+    fn test_response_time_limit() {
+        let mut stats = DashboardStats::new();
+        for i in 0..15 {
+            stats.add_response_time(Duration::from_secs(i));
+        }
+        assert_eq!(stats.response_times.len(), 10);
+        assert_eq!(stats.response_times[0], 5.0); // First 5 removed
+    }
+
+    #[test]
+    fn test_avg_response_time() {
+        let mut stats = DashboardStats::new();
+        stats.add_response_time(Duration::from_secs(2));
+        stats.add_response_time(Duration::from_secs(4));
+        assert_eq!(stats.avg_response_time(), 3.0);
+    }
+
+    #[test]
+    fn test_avg_response_time_empty() {
+        let stats = DashboardStats::new();
+        assert_eq!(stats.avg_response_time(), 0.0);
+    }
+
+    #[test]
+    fn test_add_activity() {
+        let mut stats = DashboardStats::new();
+        stats.add_activity("Test activity".to_string());
+        assert_eq!(stats.activity_log.len(), 1);
+        assert!(stats.activity_log[0].contains("Test activity"));
+    }
+
+    #[test]
+    fn test_activity_log_limit() {
+        let mut stats = DashboardStats::new();
+        for i in 0..15 {
+            stats.add_activity(format!("Activity {}", i));
+        }
+        assert_eq!(stats.activity_log.len(), 10);
+    }
+
+    #[test]
+    fn test_uptime() {
+        let stats = DashboardStats::new();
+        std::thread::sleep(Duration::from_millis(100));
+        assert!(stats.uptime().as_millis() >= 100);
+    }
+}
