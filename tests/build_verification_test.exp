@@ -1,0 +1,134 @@
+#!/usr/bin/expect -f
+# Build Verification Test - Do projects actually build?
+
+set timeout 60
+set prompt "You: "
+set builds_passed 0
+
+puts "🧪 Build Verification Test"
+puts "Testing if AI-created projects actually build"
+puts "=============================================="
+
+spawn ./target/release/wiseowlcli
+
+expect "WISEOWL CLI"
+expect $prompt
+
+# Test 1: Go REST API
+puts "\n1️⃣  Go REST API"
+send "Create a simple Go REST API with main.go\r"
+expect "AI:" { puts "  ✅ Created" }
+expect $prompt
+
+send "/write-direct go.mod \"module testapi\\n\\ngo 1.21\"\r"
+expect $prompt
+
+send "/build go\r"
+expect {
+    "✅ Build successful" {
+        incr builds_passed
+        puts "  ✅ Builds successfully"
+    }
+    "❌" {
+        puts "  ❌ Build failed"
+    }
+    timeout {
+        puts "  ⏱️  Build timeout"
+    }
+}
+expect $prompt
+
+# Test 2: Rust CLI
+puts "\n2️⃣  Rust CLI Tool"
+send "Create a Rust CLI tool with main.rs and Cargo.toml\r"
+expect "AI:" { puts "  ✅ Created" }
+expect $prompt
+
+send "/build rust\r"
+expect {
+    "✅ Build successful" {
+        incr builds_passed
+        puts "  ✅ Builds successfully"
+    }
+    "❌" {
+        puts "  ❌ Build failed"
+    }
+    timeout {
+        puts "  ⏱️  Build timeout"
+    }
+}
+expect $prompt
+
+# Test 3: Node.js Server
+puts "\n3️⃣  Node.js Server"
+send "Create Express server with package.json\r"
+expect "AI:" { puts "  ✅ Created" }
+expect $prompt
+
+send "/build npm\r"
+expect {
+    "✅ Build successful" {
+        incr builds_passed
+        puts "  ✅ Builds successfully"
+    }
+    "❌" {
+        puts "  ❌ Build failed"
+    }
+    timeout {
+        puts "  ⏱️  Build timeout"
+    }
+}
+expect $prompt
+
+# Test 4: Dockerfile
+puts "\n4️⃣  Dockerfile"
+send "Create a Dockerfile for Python Flask\r"
+expect "AI:" { puts "  ✅ Created" }
+expect $prompt
+
+send "/read Dockerfile\r"
+expect {
+    "FROM" {
+        incr builds_passed
+        puts "  ✅ Valid Dockerfile syntax"
+    }
+    timeout {
+        puts "  ❌ Invalid Dockerfile"
+    }
+}
+expect $prompt
+
+# Test 5: Makefile
+puts "\n5️⃣  Makefile"
+send "Create a Makefile with build target\r"
+expect "AI:" { puts "  ✅ Created" }
+expect $prompt
+
+send "/read Makefile\r"
+expect {
+    "build:" {
+        incr builds_passed
+        puts "  ✅ Valid Makefile syntax"
+    }
+    timeout {
+        puts "  ❌ Invalid Makefile"
+    }
+}
+expect $prompt
+
+# Exit
+send "exit\r"
+expect eof
+
+puts "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+puts "✅ BUILD VERIFICATION COMPLETE!"
+puts "Projects Built: $builds_passed/5"
+puts "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if {$builds_passed >= 4} {
+    puts "🎉 SUCCESS: Projects build successfully!"
+    exit 0
+} else {
+    puts "⚠️  WARNING: Only $builds_passed/5 projects built"
+    exit 1
+}
