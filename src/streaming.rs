@@ -1,18 +1,42 @@
-use crate::tools::{ToolResult, execute_tool, parse_tool_calls};
 use futures_util::StreamExt;
 use reqwest::Client;
 use serde_json::Value;
 use std::io::{self, Write};
 
-pub async fn stream_with_tools(
+const UPDATE_INTERVAL: usize = 20;
+const BUFFER_SIZE: usize = 512;
+
+pub struct StreamStats {
+    pub token_count: usize,
+    pub elapsed_secs: f64,
+    pub tokens_per_sec: f64,
+}
+
+impl StreamStats {
+    pub fn new(token_count: usize, elapsed_secs: f64) -> Self {
+        let tokens_per_sec = if elapsed_secs > 0.0 {
+            token_count as f64 / elapsed_secs
+        } else {
+            0.0
+        };
+        Self {
+            token_count,
+            elapsed_secs,
+            tokens_per_sec,
+        }
+    }
+}
+
+pub async fn stream_response(
     client: &Client,
     model: &str,
     prompt: &str,
-) -> Result<String, Box<dyn std::error::Error>> {
+) -> Result<(String, StreamStats), Box<dyn std::error::Error>> {
     let mut full_response = String::new();
-    let mut buffer = String::new();
+    let mut output_buffer = String::with_capacity(BUFFER_SIZE);
     let start_time = std::time::Instant::now();
     let mut token_count = 0;
+    let mut last_update = 0;
 
     let response = client
         .post("http://localhost:11434/api/generate")
@@ -29,11 +53,6 @@ pub async fn stream_with_tools(
     }
 
     let mut stream = response.bytes_stream();
-    // Print status line
-    println!("╔══════════════════════════════════════════════════════════╗");
-    println!("║ ⏳ Generating response...                                ║");
-    println!("╚══════════════════════════════════════════════════════════╝");
-    print!("AI: ");
 
     while let Some(chunk) = stream.next().await {
         let chunk = chunk?;
@@ -44,46 +63,31 @@ pub async fn stream_with_tools(
                 }
                 if let Ok(json) = serde_json::from_str::<Value>(line) {
                     if let Some(response_text) = json.get("response").and_then(|r| r.as_str()) {
-                        buffer.push_str(response_text);
                         token_count += 1;
 
-                        // Update status line every 10 tokens
-                        if token_count % 10 == 0 {
+                        // Update status less frequently
+                        if token_count - last_update >= UPDATE_INTERVAL {
                             let elapsed = start_time.elapsed().as_secs_f64();
                             let tps = token_count as f64 / elapsed;
-                            print!("\x1b[2A\r║ ⏳ {} tokens | {:.1} tok/s | {:.1}s elapsed{:20}║\x1b[2B\r", token_count, tps, elapsed, "");
+                            print!("\r⏳ {} tokens | {:.1} tok/s | {:.1}s", token_count, tps, elapsed);
                             io::stdout().flush().ok();
+                            last_update = token_count;
                         }
                         full_response.push_str(response_text);
 
-                        // Check for complete tool calls
-                        let tool_calls = parse_tool_calls(&buffer);
-                        if !tool_calls.is_empty() {
-                            println!("\n");
-                            for call in tool_calls {
-                                println!("🔧 Executing: {}", call.tool);
-                                match execute_tool(&call).await {
-                                    ToolResult::Success(result) => {
-                                        println!(
-                                            "✅ Result: {}",
-                                            result.lines().take(5).collect::<Vec<_>>().join("\n")
-                                        );
-                                    }
-                                    ToolResult::Error(err) => {
-                                        println!("❌ Error: {}", err);
-                                    }
-                                }
-                            }
-                            buffer.clear();
-                            print!("\nAI: ");
+                        // Buffer output
+                        output_buffer.push_str(response_text);
+                        if output_buffer.len() >= BUFFER_SIZE {
+                            print!("{}", output_buffer);
                             io::stdout().flush()?;
-                        } else {
-                            print!("{}", response_text);
-                            io::stdout().flush()?;
+                            output_buffer.clear();
                         }
                     }
                     if json.get("done").and_then(|d| d.as_bool()).unwrap_or(false) {
-                        println!("\n");
+                        if !output_buffer.is_empty() {
+                            print!("{}", output_buffer);
+                        }
+                        println!();
                         break;
                     }
                 }
@@ -91,5 +95,32 @@ pub async fn stream_with_tools(
         }
     }
 
-    Ok(full_response)
+    let elapsed = start_time.elapsed().as_secs_f64();
+    let stats = StreamStats::new(token_count, elapsed);
+    Ok((full_response, stats))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_constants() {
+        assert_eq!(UPDATE_INTERVAL, 20);
+        assert_eq!(BUFFER_SIZE, 512);
+    }
+
+    #[test]
+    fn test_stream_stats() {
+        let stats = StreamStats::new(100, 10.0);
+        assert_eq!(stats.token_count, 100);
+        assert_eq!(stats.elapsed_secs, 10.0);
+        assert_eq!(stats.tokens_per_sec, 10.0);
+    }
+
+    #[test]
+    fn test_stream_stats_zero_time() {
+        let stats = StreamStats::new(100, 0.0);
+        assert_eq!(stats.tokens_per_sec, 0.0);
+    }
 }

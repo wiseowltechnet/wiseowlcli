@@ -2,10 +2,10 @@
 name = "wiseowlcli"
 
 [lib]
+edition = "2021"
 name = "wiseowlcli"
 path = "src/lib.rs"
 version = "0.3.2"
-edition = "2021"
 authors = ["WiseOwl Tech <contact@wiseowltech.net>"]
 description = "Enterprise-grade AI coding assistant with LCARS styling, command history, and multi-model support"
 license = "MIT"
@@ -43,4 +43,8 @@ name = "functional_bench"
 
 [[bench]]
 name = "unit_bench"
+harness = false
+
+[[bench]]
+name = "regression_bench"
 harness = false

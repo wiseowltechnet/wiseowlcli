@@ -74,7 +74,8 @@ criterion_group!(
     bench_dashboard_add_activity
 );
 
-criterion_group!(benches, dashboard_benchmarks::bench_dashboard_add_response, dashboard_benchmarks::bench_dashboard_avg_calculation, dashboard_benchmarks::bench_dashboard_add_activity, mcp_benches::bench_mcp_client_new);
+criterion_group!(benches,
+    streaming_benches::bench_stream_stats_new, dashboard_benchmarks::bench_dashboard_add_response, dashboard_benchmarks::bench_dashboard_avg_calculation, dashboard_benchmarks::bench_dashboard_add_activity, mcp_benches::bench_mcp_client_new);
 criterion_main!(benches);
 
 mod mcp_benches {
@@ -92,4 +93,21 @@ mod mcp_benches {
 
 pub fn mcp_benchmarks(c: &mut Criterion) {
     mcp_benches::bench_mcp_client_new(c);
+}
+
+mod streaming_benches {
+    use criterion::{black_box, Criterion};
+    use wiseowlcli::streaming::StreamStats;
+
+    pub fn bench_stream_stats_new(c: &mut Criterion) {
+        c.bench_function("stream_stats_new", |b| {
+            b.iter(|| {
+                black_box(StreamStats::new(100, 10.0))
+            })
+        });
+    }
+}
+
+pub fn streaming_benchmarks(c: &mut Criterion) {
+    streaming_benches::bench_stream_stats_new(c);
 }
