@@ -4,3 +4,6 @@ pub mod streaming;
 pub mod validator;
 pub mod metrics;
 pub mod build_verifier;
+pub mod error_formatter;
+pub mod history;
+pub mod exporter;
