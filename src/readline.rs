@@ -1,4 +1,3 @@
-use rustyline::error::ReadlineError;
 use rustyline::{Editor, Config, CompletionType, history::DefaultHistory};
 use rustyline::completion::{Completer, Pair};
 use rustyline::hint::Hinter;

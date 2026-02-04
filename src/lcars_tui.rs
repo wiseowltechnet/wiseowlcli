@@ -1,7 +1,7 @@
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
+    style::{Color, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph},
     Frame, Terminal,
@@ -52,7 +52,7 @@ impl LcarsTUI {
         let header = Block::default()
             .borders(Borders::ALL)
             .style(Style::default().fg(Color::Rgb(255, 153, 0)))
-            .title(format!(" ▐█▌ LCARS OLLAMA CLI "));
+            .title(" ▐█▌ LCARS OLLAMA CLI ".to_string());
         
         let text = vec![
             Line::from(vec![

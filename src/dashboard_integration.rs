@@ -25,7 +25,7 @@ pub fn render_dashboard_frame(
     use std::io;
     
     enable_raw_mode()?;
-    let mut stdout = io::stdout();
+    let stdout = io::stdout();
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     

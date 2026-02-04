@@ -259,7 +259,7 @@ pub fn tools_to_prompt() -> String {
                 param.name, param.param_type, param.description, req
             ));
         }
-        prompt.push_str("\n");
+        prompt.push('\n');
     }
 
     prompt.push_str("To use a tool, output: <tool_call>{\"tool\":\"tool_name\",\"parameters\":{...}}</tool_call>\n");

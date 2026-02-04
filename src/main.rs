@@ -233,7 +233,7 @@ async fn handle_slash_command(
                 "{}╚═══════════════════════════════════════════════════════════════╝{}",
                 ORANGE, RESET
             );
-            println!("");
+            println!();
             println!("{}📋 Planning{}", PURPLE, RESET);
             println!("  /plan /next /show-plan");
             println!("{}🔧 WiseOwl{}", PURPLE, RESET);
@@ -586,7 +586,7 @@ Provide 5-10 concrete steps as a numbered list.",
 
             let steps: Vec<String> = response
                 .lines()
-                .filter(|line| line.trim().chars().next().map_or(false, |c| c.is_numeric()))
+                .filter(|line| line.trim().chars().next().is_some_and(|c| c.is_numeric()))
                 .map(|line| {
                     line.split_once(".")
                         .map(|(_, rest)| rest.trim().to_string())
@@ -621,7 +621,7 @@ Executing..."
 Use tools as needed and provide the result.",
                         step.description
                     );
-                    let response =
+                    let _response =
                         crate::streaming::stream_with_tools(client, model, &prompt).await?;
 
                     plan.complete_step(step.number, "Completed".to_string());
@@ -914,31 +914,31 @@ Use tools as needed and provide the result.",
         "perf" | "performance" => {
             use crate::lcars::*;
             println!("{}📊 Performance Metrics{}", PURPLE, RESET);
-            println!("");
+            println!();
             
             // Simulated metrics for now
             println!("{}Command Execution{}", BLUE, RESET);
             println!("  /help:    avg 2ms   (50 calls)");
             println!("  /stats:   avg 5ms   (20 calls)");
             println!("  /mcp:     avg 15ms  (10 calls)");
-            println!("");
+            println!();
             
             println!("{}Tool Execution{}", BLUE, RESET);
             println!("  read_file:    avg 10ms  (100 calls)");
             println!("  write_file:   avg 15ms  (50 calls)");
             println!("  execute_bash: avg 100ms (30 calls)");
-            println!("");
+            println!();
             
             println!("{}AI Response{}", BLUE, RESET);
             println!("  First token:  avg 500ms");
             println!("  Tokens/sec:   avg 25");
             println!("  Total calls:  150");
-            println!("");
+            println!();
             
             println!("{}Memory Usage{}", BLUE, RESET);
             println!("  Current:  12.5 MB");
             println!("  Peak:     18.2 MB");
-            println!("");
+            println!();
             
             println!("💡 Tip: Use /perf to track performance over time");
         }

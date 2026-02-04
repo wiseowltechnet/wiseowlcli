@@ -217,7 +217,7 @@ impl MCPClient {
 
         let result = self.call_tool(tool_name, params).await?;
 
-        callback(&format!("✅ Tool completed\n"));
+        callback(&"✅ Tool completed\n".to_string());
 
         Ok(result)
     }

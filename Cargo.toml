@@ -37,3 +37,7 @@ insta = "1.34"
 name = "functional_bench"
 harness = false
 
+
+[[bench]]
+name = "unit_bench"
+harness = false
